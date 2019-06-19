@@ -8,13 +8,17 @@ import metrics as mt
 import misc as ms
 
 class UNET(Network):
-    def __init__(self, nchannels=1, nlabels=2, nlevels=4, nfeats=32, cross_hair=False, activation='tanh', **kwargs):
-        inputs = {'main_input': {'shape': (nchannels, None, None, None), 'dtype': 'float32'}}
+    def __init__(self, nchannels=1, nlabels=2, nlevels=4, nfeats=32, cross_hair=False, dim=3, activation='tanh', **kwargs):
+        inputs = {'main_input': {'shape': (nchannels,) +(None,)*dim, 'dtype': 'float32'}}
         cfeats = nfeats
         layers = []
 
         conv = 'Conv3DCH' if cross_hair else 'Conv3D'
-        kernel = (5, 5, 5)
+
+        if dim == 2:
+            conv = 'Conv2DCH' if cross_hair else 'Conv2D'
+
+        kernel = (5,)*dim
         curinputs = 'main_input'
 
         for level in  range(nlevels):
@@ -29,7 +33,7 @@ class UNET(Network):
                             'name': 'encoder_'+str(level)+str(step),
                             'filters': cfeats,
                             'kernel_size': kernel,
-                            'strides': (1, 1, 1),
+                            'strides': (1,)*dim,
                             'padding': 'same',
                             'activation': 'linear',
                         }
@@ -69,7 +73,7 @@ class UNET(Network):
                         'name': 'encoder_'+str(level)+'_subsample',
                         'filters': cfeats,
                         'kernel_size': kernel,
-                        'strides': (2, 2, 2),
+                        'strides': (2,)*dim,
                         'padding': 'same',
                         'activation': 'linear'
                     }
@@ -95,7 +99,7 @@ class UNET(Network):
                             'name': 'decoder_'+str(level)+str(step),
                             'filters': cfeats,
                             'kernel_size': kernel,
-                            'strides': (1, 1, 1),
+                            'strides': (1,)*dim,
                             'padding': 'same',
                             'activation': 'linear'
                         }
@@ -122,28 +126,28 @@ class UNET(Network):
 
             if level > 0:
                 layers.append({
-                    'layer': 'Conv3DTranspose',
+                    'layer': 'Conv3DTranspose' if dim==3 else 'Conv2DTranspose',
                     'inputs': curinputs,
                     'sort': -((nlevels - level) * 10 + 1 + (steps)),
                     'params': {
                         'name': 'decoder_'+str(level)+'_subsample',
                         'filters': cfeats if level < nlevels-1 else cfeats * 2,
                         'kernel_size': kernel,
-                        'strides': (2, 2, 2),
+                        'strides': (2,)*dim,
                         'padding': 'same',
                         'activation': activation,
                     }
                 })
             else:
                 layers.append({
-                    'layer': 'Conv3D',
+                    'layer': 'Conv3D' if dim==3 else 'Conv2D',
                     'inputs': curinputs,
                     'sort': -((nlevels - level) * 10 + 1 + (steps) + 1),
                     'params': {
                         'name': 'presoftmax',
                         'filters': nlabels,
-                        'kernel_size': (1, 1, 1),
-                        'strides': (1, 1, 1),
+                        'kernel_size': (1,)*dim,
+                        'strides': (1,)*dim,
                         'padding': 'same',
                         'activation': 'linear',
                     }
@@ -161,7 +165,6 @@ class UNET(Network):
             curinputs = 'encoder_'+str(level)+'_subsample'
 
         layers = sorted(layers, key=lambda i: i['sort'], reverse=True)
-
         models = {'default': {'inputs': 'main_input', 'outputs': 'output'}}
         super(UNET, self).__init__(layers=layers, input_shapes=inputs, models=models, **kwargs)
 
@@ -185,14 +188,15 @@ class UNET(Network):
 
 
 if __name__ == '__main__':
-    net = UNET(cross_hair=True)
+    dim = 2
+    net = UNET(cross_hair=True,dim=dim)
     net.compile()
-    N = (10, 1, 64, 64, 64)
+    N = (10, 1) + (64, )*dim
     X = np.random.random(N)
     Y = np.random.randint(2, size=N)
     Y = np.squeeze(Y)
     Y = ms.to_one_hot(Y)
-    Y = np.transpose(Y, axes=[0,4,1,2,3])
+    Y = np.transpose(Y, axes=[0,dim+1] + range(1,dim+1))
     print 'Testing UNET Network'
     print 'Data Information => ', 'volume size:', X.shape, ' labels:',np.unique(Y)
     net.fit(x=X, y=Y, epochs=10, batch_size=2, shuffle=True)

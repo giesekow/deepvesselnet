@@ -106,10 +106,10 @@ class Convolution2DCH():
 
         kwargs['kernel_size'] = (1, ks[1])
         kwargs['name'] = self.name + '_x_axis'
-        self.convx = KL.Convolution3D(**kwargs)
+        self.convx = KL.Convolution2D(**kwargs)
         kwargs['kernel_size'] = (ks[0], 1)
         kwargs['name'] = self.name + '_y_axis'
-        self.convy = KL.Convolution3D(**kwargs)
+        self.convy = KL.Convolution2D(**kwargs)
         self.addLayer = KL.Add(name=self.name + '_add')
 
     def __call__(self,inputs, **kwargs):
