@@ -3,9 +3,7 @@ from keras.utils import np_utils
 from keras import layers as KL
 from keras import backend as K
 import numpy as np
-import SimpleITK as sitk
 import tensorflow as tf
-from sklearn.metrics import f1_score, precision_recall_curve
 
 def _categorical_crossentropy(target, output, from_logits=False, axis=-1):
     output_dimensions = list(range(len(output.get_shape())))
