@@ -8,7 +8,16 @@ import metrics as mt
 import misc as ms
 
 class FCN(Network):
+    """ Implementation of DeepVesselNet-FCN with capability of using 3D/2D kernels with or with cross-hair filters"""
     def __init__(self, nchannels=1, nlabels=2, cross_hair=False, dim=3, activation='tanh', **kwargs):
+        """ Builds the network structure  based on the parameters provided
+        parameters:
+            nchannels (int) : the number of input channels to the network.
+            nlabels (int)   : the number of labels to be predicted.
+            cross_hair (bool): whether to use cross hair filters or classical full convolutions (Read Tetteh et al.)
+            dim (int)       : the dimension of the network whether its 2D or 3D options are [2, 3] for 2D and 3D versions respectively
+            activation (keras supported activation)      : the activation function used in the layers of the network
+        """
         inputs = {'main_input': {'shape': (nchannels,) + (None,)*dim, 'dtype': 'float32'}}
         layers = []
         levels = [
