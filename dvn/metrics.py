@@ -20,8 +20,16 @@ def threshold_accuracy(threshold=0.5):
         pred = K.cast(K.greater_equal(y_pred, threshold),'int32')
         return K.mean(K.equal(K.cast(y_true, 'int32'), pred))
     return metric
+
 def categorical_accuracy(axis=-1):
     def accuracy(y_true, y_pred):
         return K.mean(K.equal(K.argmax(y_true, axis=axis),K.argmax(y_pred, axis=axis)))
 
     return accuracy
+
+def dice(smooth=1):
+    def metric(y_true, y_pred):
+        intersection = K.sum(y_true * y_pred, axis=range(1, K.ndim(y_true)))
+        union = K.sum(y_true, axis=range(1, K.ndim(y_true))) + K.sum(y_pred, axis=range(1, K.ndim(y_true)))
+        return K.mean((2. * intersection + smooth) / (union + smooth), axis=0)
+    return metric

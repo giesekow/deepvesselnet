@@ -51,17 +51,43 @@ class VNET(Network):
                     }
                 )
                 curinputs = 'encoder_'+str(level)+str(step)
+            if level == 0:
+                if nchannels == 1:
+                    layers.append(
+                        {
+                            'layer': 'Add',
+                            'sort': (nlevels-level) * 10 + 9 - (steps + 1),
+                            'inputs': [levelinput, curinputs],
+                            'params': {
+                                'name': 'encoder_' + str(level) + '_final',
+                            }
+                        }
+                     )
+                else:
+                    layers.append(
+                        {
+                            'layer': 'Concatenate',
+                            'sort': (nlevels-level) * 10 + 9 - (steps + 1),
+                            'inputs': [levelinput, curinputs],
+                            'params': {
+                                'name': 'encoder_' + str(level) + '_final',
+                                'axis': 1
+                            }
+                        }
+                     )
 
-            layers.append(
-                {
-                    'layer': 'Add',
-                    'sort': (nlevels-level) * 10 + 9 - (steps + 1),
-                    'inputs': [levelinput, curinputs],
-                    'params': {
-                        'name': 'encoder_' + str(level) + '_final'
+            else:
+                layers.append(
+                    {
+                        'layer': 'Add',
+                        'sort': (nlevels-level) * 10 + 9 - (steps + 1),
+                        'inputs': [levelinput, curinputs],
+                        'params': {
+                            'name': 'encoder_' + str(level) + '_final'
+                        }
                     }
-                }
-             )
+                 )
+
             curinputs = 'encoder_' + str(level) + '_final'
 
             if level < nlevels - 1:
