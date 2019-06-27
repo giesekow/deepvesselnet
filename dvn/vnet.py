@@ -192,7 +192,10 @@ class VNET(Network):
         layers = sorted(layers, key=lambda i: i['sort'], reverse=True)
 
         models = {'default': {'inputs': 'main_input', 'outputs': 'output'}}
-        super(VNET, self).__init__(layers=layers, input_shapes=inputs, models=models, **kwargs)
+        kwargs['layers'] = layers
+        kwargs['models'] = models
+        kwargs['input_shapes'] = inputs
+        super(VNET, self).__init__(**kwargs)
 
     def compile(self, loss=ls.categorical_crossentropy(1), optimizer='sgd', metrics=['acc'], **kwargs):
         super(VNET, self).compile(models={'default': {'loss': loss, 'optimizer': optimizer, 'metrics': metrics}})
