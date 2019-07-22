@@ -154,6 +154,7 @@ class Network(object):
             weights = data['weights']
             params['customLayers'] = customLayers
             params['input_tensors'] = input_tensors
+            params['loading'] = True
 
             net = cls(**params)
             net.build()

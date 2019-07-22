@@ -20,6 +20,10 @@ class VNET(Network):
             dim (int)       : the dimension of the network whether its 2D or 3D options are [2, 3] for 2D and 3D versions respectively
             activation (keras supported activation)      : the activation function used in the layers of the network
         """
+        if 'loading' in kwargs:
+            super(VNET, self).__init__(**kwargs)
+            return
+
         inputs = {'main_input': {'shape': (nchannels,)+ (None,)*dim, 'dtype': 'float32'}}
         cfeats = nfeats
         layers = []
