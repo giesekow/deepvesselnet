@@ -20,6 +20,7 @@ class FCN(Network):
         """
         if 'loading' in kwargs:
             super(FCN, self).__init__(**kwargs)
+            return
 
         inputs = {'main_input': {'shape': (nchannels,) + (None,)*dim, 'dtype': 'float32'}}
         layers = []
