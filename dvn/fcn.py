@@ -18,6 +18,9 @@ class FCN(Network):
             dim (int)       : the dimension of the network whether its 2D or 3D options are [2, 3] for 2D and 3D versions respectively
             activation (keras supported activation)      : the activation function used in the layers of the network
         """
+        if 'loading' in kwargs:
+            super(FCN, self).__init__(**kwargs)
+
         inputs = {'main_input': {'shape': (nchannels,) + (None,)*dim, 'dtype': 'float32'}}
         layers = []
         levels = [
@@ -74,9 +77,11 @@ class FCN(Network):
             }
         })
         layers = sorted(layers, key=lambda i: i['sort'], reverse=True)
-
         models = {'default': {'inputs': 'main_input', 'outputs': 'output'}}
-        super(FCN, self).__init__(layers=layers, input_shapes=inputs, models=models, **kwargs)
+        kwargs['layers'] = layers
+        kwargs['input_shapes'] = inputs
+        kwargs['models'] = models
+        super(FCN, self).__init__(**kwargs)
 
     def compile(self, loss=ls.categorical_crossentropy(1), optimizer='sgd', metrics=['acc'], **kwargs):
         super(FCN, self).compile(models={'default': {'loss': loss, 'optimizer': optimizer, 'metrics': metrics}})
