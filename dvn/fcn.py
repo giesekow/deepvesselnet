@@ -9,7 +9,7 @@ import misc as ms
 
 class FCN(Network):
     """ Implementation of DeepVesselNet-FCN with capability of using 3D/2D kernels with or with cross-hair filters"""
-    def __init__(self, nchannels=1, nlabels=2, cross_hair=False, dim=3, activation='tanh', **kwargs):
+    def __init__(self, nchannels=1, nlabels=2, cross_hair=False, dim=3, activation='tanh', levels=None, **kwargs):
         """ Builds the network structure  based on the parameters provided
         parameters:
             nchannels (int) : the number of input channels to the network.
@@ -24,12 +24,13 @@ class FCN(Network):
 
         inputs = {'main_input': {'shape': (nchannels,) + (None,)*dim, 'dtype': 'float32'}}
         layers = []
-        levels = [
-            {'filters': 5, 'kernel': 3},
-            {'filters': 10, 'kernel': 5},
-            {'filters': 20, 'kernel': 5},
-            {'filters': 50, 'kernel': 3},
-        ]
+        if levels is None:
+            levels = [
+                {'filters': 5, 'kernel': 3},
+                {'filters': 10, 'kernel': 5},
+                {'filters': 20, 'kernel': 5},
+                {'filters': 50, 'kernel': 3},
+            ]
 
         conv = 'Conv3DCH' if cross_hair else 'Conv3D'
         if dim==2:

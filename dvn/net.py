@@ -105,6 +105,9 @@ class Network(object):
         self.built = True
 
     def compile(self, models, **kwargs):
+        self._compile(models, **kwargs)
+
+    def _compile(self, models, **kwargs):
         if not self.built:
             self.build()
 
@@ -115,20 +118,45 @@ class Network(object):
 
         self.compiled = True
 
-    def fit(self, x, y, model, **kwargs):
+    def _fit(self, x, y, model, **kwargs):
         return self.models[model].fit(x, y, **kwargs)
 
-    def fit_generator(self, model, **kwargs):
+    def fit(self, x, y, model, **kwargs):
+        kwargs['x'] = x
+        kwargs['y'] = y
+        kwargs['model'] = model
+        return self._fit(**kwargs)
+
+    def _fit_generator(self, model, **kwargs):
         return self.models[model].fit_generator(**kwargs)
 
-    def predict_generator(self, model, **kwargs):
+    def fit_generator(self, model, **kwargs):
+        kwargs['model'] = model
+        return self._fit_generator(**kwargs)
+
+    def _predict_generator(self, model, **kwargs):
         return self.models[model].predict_generator(**kwargs)
 
-    def predict(self, x, model, **kwargs):
+    def predict_generator(self, model, **kwargs):
+        kwargs['model'] = model
+        return self._fit_generator(**kwargs)
+
+    def _predict(self, x, model, **kwargs):
         return self.models[model].predict(x, **kwargs)
 
-    def evaluate(self, x, y, model, **kwargs):
+    def predict(self, x, model, **kwargs):
+        kwargs['x'] = x
+        kwargs['model'] = model
+        return self._predict(**kwargs)
+
+    def _evaluate(self, x, y, model, **kwargs):
         return self.models[model].evaluate(x, y, **kwargs)
+
+    def evaluate(self, x, y, model, **kwargs):
+        kwargs['x'] = x
+        kwargs['y'] = y
+        kwargs['model'] = model
+        return self._evaluate(**kwargs)
 
     def save(self, filename):
         weights = {}
