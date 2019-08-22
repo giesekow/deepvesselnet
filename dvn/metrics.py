@@ -29,7 +29,7 @@ def categorical_accuracy(axis=-1):
 
 def dice(smooth=1):
     def metric(y_true, y_pred):
-        intersection = K.sum(y_true * y_pred, axis=range(1, K.ndim(y_true)))
-        union = K.sum(y_true, axis=range(1, K.ndim(y_true))) + K.sum(y_pred, axis=range(1, K.ndim(y_true)))
+        intersection = K.sum(y_true * y_pred, axis=list(range(1, K.ndim(y_true))))
+        union = K.sum(y_true, axis=list(range(1, K.ndim(y_true)))) + K.sum(y_pred, axis=list(range(1, K.ndim(y_true))))
         return K.mean((2. * intersection + smooth) / (union + smooth), axis=0)
     return metric

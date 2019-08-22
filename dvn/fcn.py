@@ -1,11 +1,11 @@
-from net import Network
+from .net import Network
 from keras import regularizers as reg
 from keras import optimizers as opt
 from keras import backend as K
 import numpy as np
-import losses as ls
-import metrics as mt
-import misc as ms
+from . import losses as ls
+from . import metrics as mt
+from . import misc as ms
 
 class FCN(Network):
     """ Implementation of DeepVesselNet-FCN with capability of using 3D/2D kernels with or with cross-hair filters"""
@@ -50,7 +50,8 @@ class FCN(Network):
                     'kernel_size': (level['kernel'],)*dim,
                     'strides': (1,)*dim,
                     'padding': 'same',
-                    'activation': activation
+                    'activation': activation,
+                    'data_format': 'channels_first'
                 }
             })
             curinputs = 'level_'+str(cnt)
@@ -67,6 +68,7 @@ class FCN(Network):
                 'strides': (1,)*dim,
                 'padding': 'same',
                 'activation': 'linear',
+                'data_format': 'channels_first'
                 }
         })
         layers.append({
@@ -113,7 +115,7 @@ if __name__ == '__main__':
     Y = np.random.randint(2, size=N)
     Y = np.squeeze(Y)
     Y = ms.to_one_hot(Y)
-    Y = np.transpose(Y, axes=[0,dim+1] + range(1,dim+1))
-    print 'Testing FCN Network'
-    print 'Data Information => ', 'volume size:', X.shape, ' labels:',np.unique(Y)
+    Y = np.transpose(Y, axes=[0,dim+1] + list(range(1,dim+1)))
+    print('Testing FCN Network')
+    print('Data Information => ', 'volume size:', X.shape, ' labels:',np.unique(Y))
     net.fit(x=X, y=Y, epochs=30, batch_size=2, shuffle=True)
