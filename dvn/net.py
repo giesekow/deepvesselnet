@@ -173,7 +173,7 @@ class Network(object):
         except:
             print 'Unable to save model'
 
-    def size():
+    def size(self):
         total = 0.
         for k in self.models:
             model = self.models[k]
