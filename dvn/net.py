@@ -173,6 +173,15 @@ class Network(object):
         except:
             print 'Unable to save model'
 
+    def size():
+        total = 0.
+        for k in self.models:
+            model = self.models[k]
+            for layer in model.layers:
+                for w in layer.get_weights():
+                    total = total + np.product(w.shape)
+        return total
+
     @classmethod
     def load(cls, filename, customLayers={}, input_tensors={}):
         try:
@@ -198,6 +207,18 @@ class Network(object):
         except:
             print 'Unable to load model'
             return None
+
+    @classmethod
+    def size_from_file(fname):
+        s = open(fname)
+        data = pickle.load(s)
+        keys = data['weights'].keys()
+        total = 0.
+        for k in keys:
+            for w in data['weights'][k]:
+                total = total + np.product(w.shape)
+        s.close()
+        return total
 
 
 if __name__ == '__main__':
