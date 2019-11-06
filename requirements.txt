@@ -1,4 +1,4 @@
-Keras==2.0.8
-numpy==1.14.0
-sklearn==0.0
-tensorflow-gpu==1.4.0
+Keras
+numpy
+scikit-learn
+tensorflow

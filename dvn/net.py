@@ -8,8 +8,8 @@ import keras
 import os
 from random import shuffle
 from keras import layers as KL
-import cPickle as pickle
-from layers import objects
+import pickle as pickle
+from .layers import objects
 
 for k in objects:
     setattr(KL, k, objects[k])
@@ -43,6 +43,7 @@ class Network(object):
             return
 
         for layer in self.layers:
+            print(('Builiding,', layer))
             lay = layer['layer']
             if isinstance(layer['inputs'], list):
                 inputs = []
@@ -169,9 +170,9 @@ class Network(object):
             data = {'params': self.params, 'weights': weights}
             s = open(filename, 'w')
             pickle.dump(data, s)
-            print 'Models successfully saved'
+            print('Models successfully saved')
         except:
-            print 'Unable to save model'
+            print('Unable to save model')
 
     def size(self):
         total = 0.
@@ -202,10 +203,10 @@ class Network(object):
                     if layer.name in weights:
                         layer.set_weights(weights[layer.name])
 
-            print 'Models successfully loaded'
+            print('Models successfully loaded')
             return net
         except:
-            print 'Unable to load model'
+            print('Unable to load model')
             return None
 
     @classmethod

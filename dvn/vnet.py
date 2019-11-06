@@ -1,11 +1,11 @@
-from net import Network
+from .net import Network
 from keras import regularizers as reg
 from keras import optimizers as opt
 from keras import backend as K
 import numpy as np
-import losses as ls
-import metrics as mt
-import misc as ms
+from . import losses as ls
+from . import metrics as mt
+from . import misc as ms
 
 class VNET(Network):
     """ Implementation of VNET by Milletari """
@@ -229,7 +229,7 @@ if __name__ == '__main__':
     Y = np.random.randint(2, size=N)
     Y = np.squeeze(Y)
     Y = ms.to_one_hot(Y)
-    Y = np.transpose(Y, axes=[0,dim+1] + range(1,dim+1))
-    print 'Testing VNET Network'
-    print 'Data Information => ', 'volume size:', X.shape, ' labels:',np.unique(Y)
+    Y = np.transpose(Y, axes=[0,dim+1] + list(range(1,dim+1)))
+    print('Testing VNET Network')
+    print('Data Information => ', 'volume size:', X.shape, ' labels:',np.unique(Y))
     net.fit(x=X, y=Y, epochs=10, batch_size=2, shuffle=True)
