@@ -6,3 +6,4 @@ from . import layers
 from . import metrics
 from . import losses
 from . import misc
+from . import utils
