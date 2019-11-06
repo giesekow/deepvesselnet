@@ -44,7 +44,6 @@ class Network(object):
             return
 
         for layer in self.layers:
-            print(('Builiding,', layer))
             lay = layer['layer']
             if isinstance(layer['inputs'], list):
                 inputs = []
