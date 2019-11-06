@@ -1,3 +1,4 @@
+from __future__ import print_function
 from keras.datasets import mnist
 from keras.utils import np_utils
 from keras import layers as KL

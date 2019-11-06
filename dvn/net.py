@@ -1,3 +1,4 @@
+from __future__ import print_function
 import numpy as np
 np.random.seed(123)  # for reproducibility
 from keras.models import Model

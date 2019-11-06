@@ -1,3 +1,4 @@
+from __future__ import print_function
 from .net import Network
 from keras import regularizers as reg
 from keras import optimizers as opt
