@@ -168,7 +168,7 @@ class Network(object):
 
         try:
             data = {'params': self.params, 'weights': weights}
-            s = open(filename, 'w')
+            s = open(filename, 'wb')
             pickle.dump(data, s)
             print('Models successfully saved')
         except:
@@ -186,8 +186,8 @@ class Network(object):
     @classmethod
     def load(cls, filename, customLayers={}, input_tensors={}):
         try:
-            s = open(filename, 'r')
-            data = pickle.load(s)
+            s = open(filename, 'rb')
+            data = pickle.load(s, encoding='latin1')
             params = data['params']
             weights = data['weights']
             params['customLayers'] = customLayers
@@ -208,6 +208,20 @@ class Network(object):
         except:
             print('Unable to load model')
             return None
+        
+    @classmethod
+    def convert_model(source, destination):
+        content = ''
+        outsize = 0
+        with open(source, 'rb') as infile:
+            content = infile.read()
+            
+        with open(destination, 'wb') as output:
+            for line in content.splitlines():
+                outsize += len(line) + 1
+                output.write(line + str.encode('\n'))
+
+        print("Done. Saved %s bytes." % (len(content)-outsize))
 
     @classmethod
     def size_from_file(fname):
