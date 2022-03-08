@@ -210,7 +210,7 @@ class Network(object):
             return None
         
     @classmethod
-    def convert_model(source, destination):
+    def convert_model(cls, source, destination):
         content = ''
         outsize = 0
         with open(source, 'rb') as infile:
@@ -224,7 +224,7 @@ class Network(object):
         print("Done. Saved %s bytes." % (len(content)-outsize))
 
     @classmethod
-    def size_from_file(fname):
+    def size_from_file(cls, fname):
         s = open(fname)
         data = pickle.load(s)
         keys = data['weights'].keys()
