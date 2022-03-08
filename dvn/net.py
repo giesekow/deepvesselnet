@@ -6,7 +6,7 @@ from keras.utils import np_utils
 from keras.datasets import mnist
 from keras import backend as K
 import keras
-import os
+import os, traceback
 from random import shuffle
 from keras import layers as KL
 import pickle as pickle
@@ -205,9 +205,32 @@ class Network(object):
 
             print('Models successfully loaded')
             return net
-        except:
-            print('Unable to load model')
+        except Exception as ex:
+            print(f"Unable to load model {ex}")
+            print(f"trace: {traceback.format_exc()}")
             return None
+        
+    @classmethod
+    def load_raw(cls, filename, customLayers={}, input_tensors={}):
+        s = open(filename, 'rb')
+        data = pickle.load(s, encoding='latin1')
+        params = data['params']
+        weights = data['weights']
+        params['customLayers'] = customLayers
+        params['input_tensors'] = input_tensors
+        params['loading'] = True
+
+        net = cls(**params)
+        net.build()
+
+        for k in net.models:
+            model = net.models[k]
+            for layer in model.layers:
+                if layer.name in weights:
+                    layer.set_weights(weights[layer.name])
+
+        print('Models successfully loaded')
+        return net
         
     @classmethod
     def convert_model(cls, source, destination):
