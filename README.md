@@ -1,14 +1,14 @@
-#Dependencies
+# Dependencies
 1. keras
 2. tensorflow / theano as backend for keras (tensoflow recommended)
 3. sklearn
 4. numpy
 
 
-#Installation
+# Installation
 `python setup.py install`
 
-#Usage
+# Usage
 ```
 from dvn import FCN, VNET, UNET  # import libraries
 
