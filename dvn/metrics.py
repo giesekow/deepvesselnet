@@ -1,7 +1,4 @@
-from keras.datasets import mnist
-from keras.utils import np_utils
-from keras import layers as KL
-from keras import backend as K
+from tensorflow.keras import backend as K
 import numpy as np
 import tensorflow as tf
 from sklearn.metrics import f1_score, precision_recall_curve

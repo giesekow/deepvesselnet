@@ -1,8 +1,5 @@
 from __future__ import print_function
-from keras.datasets import mnist
-from keras.utils import np_utils
-from keras import layers as KL
-from keras import backend as K
+from tensorflow.keras import backend as K
 import numpy as np
 import tensorflow as tf
 
@@ -22,7 +19,7 @@ def _categorical_crossentropy(target, output, from_logits=False, axis=-1):
         # manual computation of crossentropy
         _epsilon = tf.convert_to_tensor(K.epsilon(), output.dtype.base_dtype)
         output = tf.clip_by_value(output, _epsilon, 1. - _epsilon)
-        return - tf.reduce_sum(target * tf.log(output), axis)
+        return - tf.reduce_sum(tf.cast(target, 'float32') * K.log(output), axis)
     else:
         return tf.nn.softmax_cross_entropy_with_logits(labels=target,logits=output)
 
@@ -38,14 +35,14 @@ def soft_dice(y_true, y_pred):
 
     return (1. - coeff)
 
-def weighted_categorical_crossentropy(axis=1,from_logits=False,classes=2):
+def weighted_categorical_crossentropy(axis=-1,from_logits=False,classes=2):
     def loss(y_true, y_pred):
         L = _categorical_crossentropy(target=y_true,output=y_pred,axis=axis,from_logits=from_logits)
         _epsilon = K.epsilon()
         y_true_p = K.argmax(y_true, axis=axis)
         for c in range(classes):
             c_true = K.cast(K.equal(y_true_p, c), K.dtype(y_pred))
-            w = 1. / (K.sum(c_true))# + _epsilon)
+            w = 1. / (K.sum(c_true) + _epsilon)
             C = K.sum(L * c_true * w) if c == 0 else C + K.sum(L * c_true * w)
 
         return C
@@ -58,7 +55,7 @@ def weighted_categorical_crossentropy_with_fpr(axis=1,from_logits=False,classes=
         _epsilon = K.epsilon()
         y_true_p = K.argmax(y_true, axis=axis)
         y_pred_bin = K.cast(K.greater_equal(y_pred, threshold), K.dtype(y_true)) if from_logits else K.argmax(y_pred, axis=axis)
-        y_pred_probs = y_preds if from_logits else K.max(y_pred, axis=axis)
+        y_pred_probs = y_pred if from_logits else K.max(y_pred, axis=axis)
         for c in range(classes):
             c_true = K.cast(K.equal(y_true_p, c), K.dtype(y_pred))
             w = 1. / (K.sum(c_true) + _epsilon)

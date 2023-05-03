@@ -1,14 +1,9 @@
 from __future__ import print_function
 import numpy as np
 np.random.seed(123)  # for reproducibility
-from keras.models import Model
-from keras.utils import np_utils
-from keras.datasets import mnist
-from keras import backend as K
-import keras
-import os, traceback
-from random import shuffle
-from keras import layers as KL
+from tensorflow.keras.models import Model
+import traceback
+from tensorflow.keras import layers as KL
 import pickle as pickle
 from .layers import objects
 

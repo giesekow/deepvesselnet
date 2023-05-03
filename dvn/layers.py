@@ -1,5 +1,5 @@
-from keras import backend as K
-from keras import layers as KL
+from tensorflow.keras import backend as K
+from tensorflow.keras import layers as KL
 
 class DimShuffle():
     def __init__(self,**kwargs):
@@ -52,16 +52,16 @@ class Convolution3DCH():
         ks = self.kernel
         kwargs['kernel_size'] = (1, ks[1], ks[2])
         kwargs['name'] = self.name + '_x_axis'
-        kwargs['data_format'] = 'channels_first'
+        #kwargs['data_format'] = 'channels_first'
         self.convx = KL.Convolution3D(**kwargs)
         kwargs['kernel_size'] = (ks[0], 1, ks[2])
         kwargs['name'] = self.name + '_y_axis'
-        kwargs['data_format'] = 'channels_first'
+        #kwargs['data_format'] = 'channels_first'
 
         self.convy = KL.Convolution3D(**kwargs)
         kwargs['kernel_size'] = (ks[0], ks[1], 1)
         kwargs['name'] = self.name + '_z_axis'
-        kwargs['data_format'] = 'channels_first'
+        #kwargs['data_format'] = 'channels_first'
 
         self.convz = KL.Convolution3D(**kwargs)
         self.addLayer = KL.Add(name=self.name + '_add')
@@ -111,11 +111,11 @@ class Convolution2DCH():
 
         kwargs['kernel_size'] = (1, ks[1])
         kwargs['name'] = self.name + '_x_axis'
-        kwargs['data_format'] = 'channels_first'
+        #kwargs['data_format'] = 'channels_first'
         self.convx = KL.Convolution2D(**kwargs)
         kwargs['kernel_size'] = (ks[0], 1)
         kwargs['name'] = self.name + '_y_axis'
-        kwargs['data_format'] = 'channels_first'
+        #kwargs['data_format'] = 'channels_first'
         self.convy = KL.Convolution2D(**kwargs)
         self.addLayer = KL.Add(name=self.name + '_add')
 
